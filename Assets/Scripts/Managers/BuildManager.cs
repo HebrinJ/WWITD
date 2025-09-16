@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class BuildManager : MonoBehaviour
 {
-    [SerializeField] ResourceManager resourceManager;
+    [SerializeField] LocalResourceManager localResourceManager;
     private TowerPlaceholder selectedPlaceholder;
     private TowerType pendingTowerType;
 
@@ -50,7 +50,7 @@ public class BuildManager : MonoBehaviour
         bool canAffordAll = true;
         foreach (TowerCost cost in towerData.constructionCost)
         {
-            if (resourceManager != null && !resourceManager.CanAfford(cost.resourceType, cost.amount))
+            if (localResourceManager != null && !localResourceManager.CanAfford(cost.resourceType, cost.amount))
             {
                 canAffordAll = false;
                 Debug.Log($"Not enough {cost.resourceType}! Need: {cost.amount}");

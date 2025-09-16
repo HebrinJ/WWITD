@@ -6,6 +6,7 @@ public class UI_ResourceDisplay : MonoBehaviour
 {
     [SerializeField] private ResourceType resourceType;
     [SerializeField] private TextMeshProUGUI amountText;
+    [SerializeField] private ResourceManager resourceManager;
 
     private void OnEnable()
     {
@@ -27,7 +28,6 @@ public class UI_ResourceDisplay : MonoBehaviour
 
     private void Start()
     {
-        ResourceManager resourceManager = FindObjectOfType<ResourceManager>();
         if (resourceManager != null)
         {
             amountText.text = resourceManager.GetResourceAmount(resourceType).ToString();

@@ -1,39 +1,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ResourceManager : MonoBehaviour
+public class LocalResourceManager : MonoBehaviour
 {
-    // —ловарь дл€ хранени€ текущих количеств ресурсов
     private Dictionary<ResourceType, int> resources = new Dictionary<ResourceType, int>();
 
-    // —тартовые значени€ ресурсов (можно вынести в SO)
-    [SerializeField] private int blueprints = 0;
+    [SerializeField] private int startMoney = 100;
+    [SerializeField] private int startSteel = 50;
+    [SerializeField] private int startFuel = 25;
 
-    private void Awake()
+    private void Start()
     {
         InitializeResources();
     }
 
-    private void OnEnable()
-    {
-        EventHub.OnResourceSpendRequested += HandleSpendRequest;
-        EventHub.OnResourceAmountAdded += HandleResourceAdded;
-        EventHub.OnEnemyDied += HandleEnemyDied;
-    }
-
-    private void OnDisable()
-    {
-        EventHub.OnResourceSpendRequested -= HandleSpendRequest;
-        EventHub.OnResourceAmountAdded -= HandleResourceAdded;
-        EventHub.OnEnemyDied -= HandleEnemyDied;
-    }
-
-    // »нициализаци€ стартовых ресурсов
     private void InitializeResources()
     {
-        resources[ResourceType.Blueprints] = blueprints;
+        resources[ResourceType.Money] = startMoney;
+        resources[ResourceType.Steel] = startSteel;
+        resources[ResourceType.Fuel] = startFuel;
 
-        // ќповещаем о стартовых значени€х
         foreach (var resource in resources)
         {
             EventHub.OnResourceAmountChanged?.Invoke(resource.Key, resource.Value);

@@ -5,6 +5,7 @@ public class GameStateManager : MonoBehaviour
 {
     public static GameStateManager Instance { get; private set; }
     private GameState currentState;
+    public GameState CurrentState => currentState;
 
     public static event Action<GameState> OnGameStateChanged;
 

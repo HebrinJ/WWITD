@@ -1,4 +1,3 @@
-using Mono.Cecil;
 using System;
 using UnityEngine;
 
@@ -28,4 +27,5 @@ public static class EventHub
     public static Action OnGameStart;
     public static Action OnGameOver;
     public static Action<EnemyBehaviour> OnEnemyDied;
+    public static Action OnLevelComplete;
 }
