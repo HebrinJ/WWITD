@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d3b786d7e78ee64485b7f34b74ad2c7, type: 3}
+  m_Name: Data_Tower_Machinegun
+  m_EditorClassIdentifier: 
+  towerName: Data_Tower_MachineGun
+  towerType: 0
+  constructionCost:
+  - resourceType: 0
+    amount: 100
+  baseDamage: 10
+  baseRange: 10
+  attacksPerSecond: 1
+  towerPrefab: {fileID: 1137887266330631582, guid: 5fdacf1973ec13246af7517d97513e28, type: 3}
+  projectilePrefab: {fileID: 1624790118039240644, guid: 4f61e57ece81bc64bab9d41946b932a4, type: 3}
