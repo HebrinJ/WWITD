@@ -15,6 +15,6 @@ MonoBehaviour:
   enemyName: Data_Enemy_Soldier
   maxHealth: 100
   moveSpeed: 3
-  damageToBase: 1
+  damageToBase: 30
   rewardMoney: 10
   prefab: {fileID: 27748634237623683, guid: 20e01ea77c322d8498b79389add802df, type: 3}

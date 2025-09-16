@@ -19,6 +19,7 @@ public static class EventHub
     // Волны и враги
     public static Action OnWaveStarted;
     public static Action OnWaveCompleted;
+    public static Action<EnemyBehaviour> OnEnemyReachedBase;
 
     // Игровой процесс
     public static Action OnGameStart;

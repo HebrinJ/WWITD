@@ -52,8 +52,10 @@ public class EnemyBehaviour : MonoBehaviour
     private void ReachedBase()
     {
         Debug.Log("Enemy reached the base!");
-        // Вызываем событие: враг дошел до базы и нанес урон
-        // Пока просто уничтожаем его
+
+        // Оповещаем EventHub о том, что враг дошел до базы и готов нанести урон.
+        EventHub.OnEnemyReachedBase?.Invoke(this);
+
         Destroy(gameObject);
     }
 
