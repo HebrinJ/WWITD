@@ -6,6 +6,7 @@ public class UI_TowerSelection : MonoBehaviour
     [SerializeField] private GameObject selectionPanel;
     [SerializeField] private Button machineGunButton;
     [SerializeField] private Button closeButton;
+    [SerializeField] private Camera mainCamera;
 
     private TowerPlaceholder currentPlaceholder;
 
@@ -35,9 +36,11 @@ public class UI_TowerSelection : MonoBehaviour
         currentPlaceholder = placeholder;
         selectionPanel.SetActive(true);
 
-        // Позиционируем панель
-        Vector3 screenPosition = Camera.main.WorldToScreenPoint(placeholder.transform.position);
-        selectionPanel.transform.position = screenPosition + new Vector3(0, 100, 0);
+        if (mainCamera != null)
+        {
+            Vector3 screenPosition = mainCamera.WorldToScreenPoint(placeholder.transform.position);
+            selectionPanel.transform.position = screenPosition + new Vector3(0, 100, 0);
+        }
     }
 
     private void HideSelectionPanel()

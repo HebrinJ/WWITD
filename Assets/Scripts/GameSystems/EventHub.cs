@@ -15,6 +15,9 @@ public static class EventHub
     public static Action<TowerType> OnTowerSelectedFromUI; // Выбрали тип башни из UI
     public static Action<TowerDataSO, Vector3> OnTowerBuildConfirmed;
     public static Action OnTowerBuildFailed;
+    public static Action OnConstructionModeToggled; // Когда нажали кнопку Строительства
+    public static Action<bool> OnConstructionModeChanged; // Когда режим изменился
+    public static Action<TowerBehaviour> OnTowerOptionsRequested; // Показать опции башни
 
     // Волны и враги
     public static Action OnWaveStarted;
