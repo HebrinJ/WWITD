@@ -3,12 +3,23 @@ using UnityEngine;
 
 public class GlobalResourceManager : MonoBehaviour
 {
+    public static GlobalResourceManager Instance { get; private set; }
+
     private Dictionary<ResourceType, int> resources = new Dictionary<ResourceType, int>();
 
-    [SerializeField] private int startBlueprints = 0; // Стартовые чертежи
+    [SerializeField] private int startBlueprints = 0;
 
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
         InitializeResources();
     }
 

@@ -6,7 +6,8 @@ public class SceneLoaderManager : MonoBehaviour
 {
     public static SceneLoaderManager Instance;
 
-    [SerializeField] private string strategyMapSceneName = "StrategyMap";
+    [SerializeField] private string strategyMapSceneName = "Map";
+    [SerializeField] private string mainMenuSceneName = "MainMenu";
 
     private string currentActiveScene = "";
 
@@ -25,7 +26,12 @@ public class SceneLoaderManager : MonoBehaviour
 
     private void Start()
     {
-        GameStateManager.Instance.SetState(GameState.MainMenu);
+        LoadMainMenu();
+    }
+
+    public void LoadMainMenu()
+    {
+        StartCoroutine(SwitchScene(mainMenuSceneName, GameState.MainMenu));
     }
 
     public void LoadStrategyMap()

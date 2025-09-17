@@ -44,21 +44,18 @@ public class GameStateManager : MonoBehaviour
         {
             case GameState.MainMenu:
                 Time.timeScale = 1f;
-                // Загружаем сцену главного меню
                 break;
 
             case GameState.StrategyMap:
-                // Загружаем стратегическую карту
-                // Показываем пройденные уровни, доступные миссии
+                Time.timeScale = 1f;
                 break;
 
             case GameState.TacticalLevel:
                 Time.timeScale = 1f;
-                // Инициализируем уровень: спавним штаб, врагов, ресурсы. Первая волна спавнится после нажатия кнопки старт
                 break;
 
             case GameState.Paused:
-                Time.timeScale = 0f; // Главное - останавливаем время!
+                Time.timeScale = 0f;
                 break;
         }
     }
