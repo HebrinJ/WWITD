@@ -1,21 +1,35 @@
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 public class UI_ResourceDisplay : MonoBehaviour
 {
     [SerializeField] private ResourceType resourceType;
     [SerializeField] private TextMeshProUGUI amountText;
-    [SerializeField] private ResourceManager resourceManager;
+    [SerializeField] private bool isGlobalResource;
 
     private void OnEnable()
     {
-        EventHub.OnResourceAmountChanged += HandleResourceChanged;
+        // Подписываемся на нужное событие в зависимости от типа ресурса
+        if (isGlobalResource)
+        {
+            EventHub.OnGlobalResourceChanged += HandleResourceChanged;
+        }
+        else
+        {
+            EventHub.OnLocalResourceChanged += HandleResourceChanged;
+        }
     }
 
     private void OnDisable()
     {
-        EventHub.OnResourceAmountChanged -= HandleResourceChanged;
+        if (isGlobalResource)
+        {
+            EventHub.OnGlobalResourceChanged -= HandleResourceChanged;
+        }
+        else
+        {
+            EventHub.OnLocalResourceChanged -= HandleResourceChanged;
+        }
     }
 
     private void HandleResourceChanged(ResourceType type, int amount)
@@ -28,9 +42,6 @@ public class UI_ResourceDisplay : MonoBehaviour
 
     private void Start()
     {
-        if (resourceManager != null)
-        {
-            amountText.text = resourceManager.GetResourceAmount(resourceType).ToString();
-        }
+        //TODO: Заправшивать ресурсы из правильного менеджера
     }
 }

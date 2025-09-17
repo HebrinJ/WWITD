@@ -2,11 +2,17 @@ using System;
 using UnityEngine;
 
 public static class EventHub
-{    
-    // Ресурсы
-    public static Action<ResourceType, int> OnResourceAmountChanged; // Тип ресурса и новое количество
-    public static Action<ResourceType, int> OnResourceAmountAdded;   // Какой ресурс и сколько добавили
-    public static Action<ResourceCost> OnResourceSpendRequested;     // Запрос на трату ресурсов
+{
+    // === ГЛОБАЛЬНЫЕ РЕСУРСЫ (Blueprints) ===
+    public static Action<ResourceType, int> OnGlobalResourceChanged;
+    public static Action<ResourceType, int> OnGlobalResourceAdded;
+    public static Action<ResourceCost> OnGlobalResourceSpendRequested; // Для исследований на карте
+
+    // === ЛОКАЛЬНЫЕ РЕСУРСЫ (Money, Steel, Fuel) ===
+    public static Action<ResourceType, int> OnLocalResourceChanged;
+    public static Action<ResourceType, int> OnLocalResourceAdded;
+    public static Action<ResourceCost> OnLocalResourceSpendRequested; // Для строительства на уровне
+    public static Action<EnemyBehaviour> OnEnemyDiedForMoney; // Событие для награды деньгами
 
 
     // Строительство

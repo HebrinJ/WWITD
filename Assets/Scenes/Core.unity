@@ -454,7 +454,7 @@ GameObject:
   - component: {fileID: 886290115}
   - component: {fileID: 886290116}
   m_Layer: 0
-  m_Name: ResourceManager
+  m_Name: GlobalResourceManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -14,56 +14,65 @@ public class LocalResourceManager : MonoBehaviour
         InitializeResources();
     }
 
+    private void OnEnable()
+    {
+        EventHub.OnLocalResourceSpendRequested += HandleSpendRequest;
+        EventHub.OnLocalResourceAdded += HandleResourceAdded;
+        EventHub.OnEnemyDiedForMoney += HandleEnemyDied;
+    }
+
+    private void OnDisable()
+    {
+        EventHub.OnLocalResourceSpendRequested -= HandleSpendRequest;
+        EventHub.OnLocalResourceAdded -= HandleResourceAdded;
+        EventHub.OnEnemyDiedForMoney -= HandleEnemyDied;
+    }
+
     private void InitializeResources()
     {
         resources[ResourceType.Money] = startMoney;
         resources[ResourceType.Steel] = startSteel;
         resources[ResourceType.Fuel] = startFuel;
 
+        // Оповещаем UI
         foreach (var resource in resources)
         {
-            EventHub.OnResourceAmountChanged?.Invoke(resource.Key, resource.Value);
+            EventHub.OnLocalResourceChanged?.Invoke(resource.Key, resource.Value);
         }
     }
 
-    // Обработка запроса на трату ресурсов
     private void HandleSpendRequest(ResourceCost cost)
     {
+        // Запрос на списание идет из локального контекста (BuildManager)
         if (CanAfford(cost))
         {
             SpendResource(cost.resourceType, cost.amount);
-            //EventHub.OnTowerBuildConfirmed?.Invoke(null, Vector3.zero); // TODO: передавать реальные данные
         }
         else
         {
             Debug.Log($"Not enough {cost.resourceType}!");
-            // Можно вызвать событие OnNotEnoughResources
         }
     }
 
-    // Обработка добавления ресурсов
     private void HandleResourceAdded(ResourceType type, int amount)
     {
         AddResource(type, amount);
     }
 
-    // Обработка смерти врага - награда деньгами
     private void HandleEnemyDied(EnemyBehaviour enemy)
     {
+        // Начисляем деньги только за смерть врага
         if (enemy != null && enemy.Data != null)
         {
             AddResource(ResourceType.Money, enemy.Data.rewardMoney);
         }
     }
 
-    // Проверка, хватает ли ресурсов
     public bool CanAfford(ResourceCost cost)
     {
-        return resources.ContainsKey(cost.resourceType) &&
-               resources[cost.resourceType] >= cost.amount;
+        return resources.ContainsKey(cost.resourceType) && resources[cost.resourceType] >= cost.amount;
     }
 
-    // Проверка, хватает ли ресурсов (удобная перегрузка)
     public bool CanAfford(ResourceType type, int amount)
     {
         return CanAfford(new ResourceCost(type, amount));
@@ -74,23 +83,19 @@ public class LocalResourceManager : MonoBehaviour
         if (resources.ContainsKey(type))
         {
             resources[type] -= amount;
-            EventHub.OnResourceAmountChanged?.Invoke(type, resources[type]);
-            Debug.Log($"Spent {amount} {type}. Remaining: {resources[type]}");
+            EventHub.OnLocalResourceChanged?.Invoke(type, resources[type]);
         }
     }
 
-    // Добавление ресурсов
     private void AddResource(ResourceType type, int amount)
     {
         if (resources.ContainsKey(type))
         {
             resources[type] += amount;
-            EventHub.OnResourceAmountChanged?.Invoke(type, resources[type]);
-            Debug.Log($"Added {amount} {type}. Total: {resources[type]}");
+            EventHub.OnLocalResourceChanged?.Invoke(type, resources[type]);
         }
     }
 
-    // Получение текущего количества ресурса (для UI)
     public int GetResourceAmount(ResourceType type)
     {
         return resources.ContainsKey(type) ? resources[type] : 0;

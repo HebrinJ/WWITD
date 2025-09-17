@@ -60,14 +60,11 @@ public class BuildManager : MonoBehaviour
 
         if (canAffordAll)
         {
-            // Если ресурсов хватает - списываем их и строим
             foreach (TowerCost cost in towerData.constructionCost)
             {
                 ResourceCost resourceCost = new ResourceCost(cost.resourceType, cost.amount);
-                EventHub.OnResourceSpendRequested?.Invoke(resourceCost);
+                EventHub.OnLocalResourceSpendRequested?.Invoke(resourceCost);
             }
-
-            // Строим башню
             BuildTower(towerData);
         }
         else

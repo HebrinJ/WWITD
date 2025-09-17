@@ -72,8 +72,7 @@ public class EnemyBehaviour : MonoBehaviour
     private void Die()
     {
         Debug.Log("Enemy died! Granting reward: " + data.rewardMoney);
-        // Сообщаем о смерти врага через EventHub
-        EventHub.OnEnemyDied?.Invoke(this); // Передаем себя, чтобы слушатели знали, кто умер
+        EventHub.OnEnemyDiedForMoney?.Invoke(this);
         Destroy(gameObject);
     }
 }
