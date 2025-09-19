@@ -607,6 +607,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allWaveData:
   - {fileID: 11400000, guid: 0081055fc317d1444876ac639d52b6f8, type: 2}
+  - {fileID: 11400000, guid: 2b702d513f29f4c48bcd238cc37aba8a, type: 2}
   allEnemyData:
   - {fileID: 11400000, guid: 19949e792aead0f48b2402ffcc29f28b, type: 2}
   allTowerData:

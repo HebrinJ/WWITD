@@ -13,8 +13,15 @@ MonoBehaviour:
   m_Name: Data_Enemy_Soldier
   m_EditorClassIdentifier: 
   enemyName: Data_Enemy_Soldier
-  maxHealth: 100
+  enemyBehaviourType: 1
+  maxHealth: 50
+  maxArmor: 0
+  damageType: 0
+  damageToBase: 10
+  damageToTarget: 0
   moveSpeed: 3
-  damageToBase: 30
+  fireRate: 0
+  fireDistance: 0
   rewardMoney: 10
+  warningRate: 0
   prefab: {fileID: 27748634237623683, guid: 20e01ea77c322d8498b79389add802df, type: 3}

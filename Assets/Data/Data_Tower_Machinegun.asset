@@ -17,8 +17,11 @@ MonoBehaviour:
   constructionCost:
   - resourceType: 0
     amount: 100
-  baseDamage: 10
-  baseRange: 10
-  attacksPerSecond: 1
-  towerPrefab: {fileID: 1137887266330631582, guid: 5fdacf1973ec13246af7517d97513e28, type: 3}
+  maxHealth: 50
+  maxArmor: 0
+  damageType: 0
+  damage: 10
+  fireDistance: 10
+  fireRate: 1
+  towerPrefab: {fileID: 6527161790620880142, guid: 6092d3f99096ac9498ce768974ccb07b, type: 3}
   projectilePrefab: {fileID: 1624790118039240644, guid: 4f61e57ece81bc64bab9d41946b932a4, type: 3}

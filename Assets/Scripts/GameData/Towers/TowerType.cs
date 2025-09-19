@@ -1,7 +1,12 @@
 public enum TowerType
 {
-    MachineGun,
-    Sniper,
+    Riflemen,
+    Gunner,
+    Marksman,
+    Flammer,
     Mortar,
+    Antitank,
+    Howitzer,
+    Antiaircraft,
     None
 }

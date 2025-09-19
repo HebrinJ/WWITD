@@ -48,7 +48,7 @@ public class TowerBehaviour : MonoBehaviour
     {
         while (isActive)
         {
-            yield return new WaitForSeconds(1f / data.attacksPerSecond);
+            yield return new WaitForSeconds(1f / data.fireRate);
 
             if (FindTarget())
             {
@@ -59,7 +59,7 @@ public class TowerBehaviour : MonoBehaviour
 
     private bool FindTarget()
     {
-        Collider[] enemiesInRange = Physics.OverlapSphere(transform.position, data.baseRange);
+        Collider[] enemiesInRange = Physics.OverlapSphere(transform.position, data.fireDistance);
 
         foreach (Collider enemyCollider in enemiesInRange)
         {
@@ -87,7 +87,7 @@ public class TowerBehaviour : MonoBehaviour
 
         if (projectile != null)
         {
-            projectile.SetTarget(currentTarget.transform, data.baseDamage);
+            projectile.SetTarget(currentTarget.transform, data.damage);
         }
         else
         {
@@ -102,7 +102,7 @@ public class TowerBehaviour : MonoBehaviour
         if (data != null)
         {
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, data.baseRange);
+            Gizmos.DrawWireSphere(transform.position, data.fireDistance);
         }
     }
 

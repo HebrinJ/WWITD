@@ -26,7 +26,7 @@ public class UI_TowerSelection : MonoBehaviour
         selectionPanel.SetActive(false);
 
         // Настраиваем кнопки
-        machineGunButton.onClick.AddListener(() => SelectTower(TowerType.MachineGun));
+        machineGunButton.onClick.AddListener(() => SelectTower(TowerType.Riflemen));
         closeButton.onClick.AddListener(HideSelectionPanel);
     }
 

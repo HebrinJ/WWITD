@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cdeaa64dcbf06244fbf794dabe360610, type: 3}
-  m_Name: WaveDataSO_1
+  m_Name: WaveDataSO_1_1
   m_EditorClassIdentifier: 
-  waveId: 1
+  waveId: 1-1
   enemiesInWave:
   - enemyData: {fileID: 11400000, guid: 19949e792aead0f48b2402ffcc29f28b, type: 2}
     count: 5
     spawnInterval: 1
+  nextWaveDelay: 10

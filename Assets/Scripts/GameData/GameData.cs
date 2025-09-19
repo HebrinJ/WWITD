@@ -21,7 +21,7 @@ public class GameData : MonoBehaviour
         }
     }
 
-    public WaveDataSO GetWaveData(int waveId)
+    public WaveDataSO GetWaveData(string waveId)
     {
         return allWaveData.Find(wave => wave.waveId == waveId);
     }

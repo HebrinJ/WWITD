@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,13 +9,21 @@ public class WaveManager : MonoBehaviour
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private LevelManager levelManager;
 
-    private int currentWaveIndex = 0;
-    private bool isWaveActive = false;
-    private List<EnemyBehaviour> activeEnemies = new List<EnemyBehaviour>();
+    private int currentWaveIndex = -1;
+    private bool isWavesSequenceActive = false;
+    private List<EnemyBehaviour> allActiveEnemies = new List<EnemyBehaviour>();
+    private List<Coroutine> activeWaveCoroutines = new List<Coroutine>();
+    private int wavesCompleted = 0;
 
-    public bool IsWaveActive => isWaveActive;
+    public bool IsWavesSequenceActive => isWavesSequenceActive;
     public int TotalWaves => levelWaves != null ? levelWaves.Length : 0;
     public int CurrentWaveNumber => currentWaveIndex + 1;
+
+    public Action<float> OnNextWaveTimerStarted;
+    public Action<float> OnNextWaveTimerUpdated;
+    public Action OnNextWaveTimerEnded;
+    public Action<int> OnWaveStarted;
+    public Action<int> OnWaveCompleted;
 
     private void OnEnable()
     {
@@ -26,104 +35,156 @@ public class WaveManager : MonoBehaviour
         EventHub.OnEnemyDied -= HandleEnemyDied;
     }
 
-    public void StartWave()
+    public void StartWaves()
     {
-        Debug.Log("Wave started");
-        if (isWaveActive || currentWaveIndex >= TotalWaves) return;
+        if (isWavesSequenceActive || currentWaveIndex >= TotalWaves) return;
 
-        StartCoroutine(WaveRoutine());
+        isWavesSequenceActive = true;
+        currentWaveIndex = 0;
+        wavesCompleted = 0;
+
+        StartWave(0);
     }
 
-    private IEnumerator WaveRoutine()
+    private void StartWave(int waveIndex)
     {
-        isWaveActive = true;
-        Debug.Log($"Starting wave {CurrentWaveNumber}/{TotalWaves}");
+        if (waveIndex >= TotalWaves) return;
+
+        WaveDataSO waveData = levelWaves[waveIndex];
+        currentWaveIndex = waveIndex;
+
+        Debug.Log($"Starting wave {CurrentWaveNumber}");
+        OnWaveStarted?.Invoke(CurrentWaveNumber);
         EventHub.OnWaveStarted?.Invoke();
 
-        // Получаем данные текущей волны
-        WaveDataSO currentWaveData = levelWaves[currentWaveIndex];
+        // Запускаем корутину для спавна волны
+        Coroutine waveCoroutine = StartCoroutine(SpawnWaveRoutine(waveData, waveIndex));
+        activeWaveCoroutines.Add(waveCoroutine);
 
-        // Спавним все группы врагов в волне
-        foreach (WaveEnemy waveEnemy in currentWaveData.enemiesInWave)
+        // Если есть следующая волна, запускаем таймер для нее
+        if (waveIndex < TotalWaves - 1)
         {
-            yield return StartCoroutine(SpawnEnemyGroupRoutine(waveEnemy));
-        }
-
-        // Ждем, пока все враги не будут уничтожены или не дойдут до базы
-        yield return WaitForWaveCompletion();
-
-        CompleteWave();
-    }
-
-    private IEnumerator SpawnEnemyGroupRoutine(WaveEnemy waveEnemy)
-    {
-        for (int i = 0; i < waveEnemy.count; i++)
-        {
-            SpawnEnemy(waveEnemy.enemyData);
-            yield return new WaitForSeconds(waveEnemy.spawnInterval);
+            float nextWaveDelay = waveData.nextWaveDelay;
+            Debug.Log($"Next wave will start in {nextWaveDelay} seconds");
+            StartCoroutine(StartNextWaveTimerRoutine(nextWaveDelay, waveIndex + 1));
         }
     }
 
-    private void SpawnEnemy(EnemyDataSO enemyData)
+    private IEnumerator SpawnWaveRoutine(WaveDataSO waveData, int waveIndex)
     {
-        GameObject enemyInstance = Instantiate(enemyData.prefab, spawnPoint.position, spawnPoint.rotation);
-        EnemyBehaviour enemyBehaviour = enemyInstance.GetComponent<EnemyBehaviour>();
-        enemyBehaviour.SetData(enemyData);
-        enemyBehaviour.SetPath(Waypoints.Points);
+        List<EnemyBehaviour> waveEnemies = new List<EnemyBehaviour>();
 
-        activeEnemies.Add(enemyBehaviour);
-        Debug.Log($"Spawned: {enemyData.enemyName}");
+        // Спавним всех врагов волны
+        foreach (WaveEnemy waveEnemy in waveData.enemiesInWave)
+        {
+            for (int i = 0; i < waveEnemy.count; i++)
+            {
+                GameObject enemyInstance = Instantiate(waveEnemy.enemyData.prefab, spawnPoint.position, spawnPoint.rotation);
+                EnemyBehaviour enemyBehaviour = enemyInstance.GetComponent<EnemyBehaviour>();
+                enemyBehaviour.SetData(waveEnemy.enemyData);
+                enemyBehaviour.SetPath(Waypoints.Points);
+
+                waveEnemies.Add(enemyBehaviour);
+                allActiveEnemies.Add(enemyBehaviour);
+
+                yield return new WaitForSeconds(waveEnemy.spawnInterval);
+            }
+        }
+
+        Debug.Log($"Wave {waveIndex + 1} spawning completed. Waiting for enemies...");
+
+        // Ждем пока все враги этой волны не будут уничтожены
+        yield return WaitForWaveEnemiesDefeated(waveEnemies);
+
+        // Волна завершена
+        Debug.Log($"Wave {waveIndex + 1} completed");
+        wavesCompleted++;
+        OnWaveCompleted?.Invoke(waveIndex + 1);
+        EventHub.OnWaveCompleted?.Invoke();
+
+        // Проверяем завершение уровня
+        CheckLevelCompletion();
     }
 
-    private IEnumerator WaitForWaveCompletion()
+    private IEnumerator StartNextWaveTimerRoutine(float delay, int nextWaveIndex)
     {
-        // Ждем пока есть активные враги
-        while (activeEnemies.Count > 0)
+        OnNextWaveTimerStarted?.Invoke(delay);
+
+        float timer = delay;
+        while (timer > 0)
         {
-            // Удаляем уничтоженных врагов из списка
-            activeEnemies.RemoveAll(enemy => enemy == null);
+            timer -= Time.deltaTime;
+            OnNextWaveTimerUpdated?.Invoke(timer);
+            yield return null;
+        }
+
+        OnNextWaveTimerEnded?.Invoke();
+
+        // Запускаем следующую волну
+        StartWave(nextWaveIndex);
+    }
+
+    private IEnumerator WaitForWaveEnemiesDefeated(List<EnemyBehaviour> waveEnemies)
+    {
+        while (waveEnemies.Count > 0)
+        {
+            // Удаляем уничтоженных врагов
+            for (int i = waveEnemies.Count - 1; i >= 0; i--)
+            {
+                if (waveEnemies[i] == null)
+                {
+                    waveEnemies.RemoveAt(i);
+                }
+            }
             yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    private void CheckLevelCompletion()
+    {
+        // Уровень завершен, когда:
+        // 1. Все волны запущены (currentWaveIndex достиг максимума)
+        // 2. Все волны завершены (wavesCompleted == TotalWaves)
+        // 3. Все враги уничтожены (allActiveEnemies пуст)
+
+        if (currentWaveIndex >= TotalWaves - 1 &&
+            wavesCompleted == TotalWaves &&
+            allActiveEnemies.Count == 0)
+        {
+            Debug.Log("Level completed! All waves finished and all enemies defeated.");
+            isWavesSequenceActive = false;
+            levelManager?.CompleteLevel(true);
         }
     }
 
     private void HandleEnemyDied(EnemyBehaviour enemy)
     {
-        // Удаляем врага из списка активных
-        if (activeEnemies.Contains(enemy))
+        if (allActiveEnemies.Contains(enemy))
         {
-            activeEnemies.Remove(enemy);
+            allActiveEnemies.Remove(enemy);
         }
+        EventHub.OnEnemyDiedForMoney?.Invoke(enemy);
+
+        // Проверяем завершение уровня после каждого убийства
+        CheckLevelCompletion();
     }
 
-    private void CompleteWave()
+    public void StopAllWaves()
     {
-        isWaveActive = false;
-        currentWaveIndex++;
-
-        Debug.Log($"Wave {CurrentWaveNumber - 1} completed!");
-        EventHub.OnWaveCompleted?.Invoke();
-
-        // Проверяем, была ли это последняя волна
-        if (currentWaveIndex >= TotalWaves)
+        foreach (var coroutine in activeWaveCoroutines)
         {
-            Debug.Log("All waves completed! Level victory!");
-            levelManager?.CompleteLevel(true);
+            if (coroutine != null)
+            {
+                StopCoroutine(coroutine);
+            }
         }
+        activeWaveCoroutines.Clear();
+        isWavesSequenceActive = false;
     }
 
-    // Метод для получения информации о волнах (для UI)
     public string GetWaveInfo()
     {
-        return $"Wave {CurrentWaveNumber}/{TotalWaves}";
-    }
-
-    // Метод для принудительного запуска конкретной волны (для тестов)
-    public void StartSpecificWave(int waveIndex)
-    {
-        if (waveIndex >= 0 && waveIndex < TotalWaves)
-        {
-            currentWaveIndex = waveIndex;
-            StartWave();
-        }
+        if (currentWaveIndex < 0) return "Ready to start";
+        return $"Wave {Mathf.Min(CurrentWaveNumber, TotalWaves)}/{TotalWaves}";
     }
 }
