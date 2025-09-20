@@ -1140,10 +1140,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f688573c9f7d41e4487c494455a2d35b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testBranch: {fileID: 11400000, guid: 5c04ee94a78ae6246b238745e1f12995, type: 2}
+  allBranches:
+  - {fileID: 11400000, guid: 5c04ee94a78ae6246b238745e1f12995, type: 2}
   branchesContainer: {fileID: 1494069153}
   researchNodePrefab: {fileID: -3026857489932207468, guid: 2c58051dc1eabc0449c0ae8650818360, type: 3}
-  connectorLinePrefab: {fileID: 1469836375285399416, guid: 5cf0492b6a6ece3438097aa23752555c, type: 3}
+  connectorLinePrefab: {fileID: 4116281087387890674, guid: 5cf0492b6a6ece3438097aa23752555c, type: 3}
+  horizontalSpacing: 200
+  verticalSpacing: 100
 --- !u!1 &1249913376
 GameObject:
   m_ObjectHideFlags: 0

@@ -25,6 +25,26 @@ public class ResearchManager : MonoBehaviour
         InitializeDefaultStates();
     }
 
+    private void OnEnable()
+    {
+        // Подписываемся на изменение ресурсов
+        EventHub.OnGlobalResourceChanged += HandleResourceChanged;
+    }
+
+    private void OnDisable()
+    {
+        EventHub.OnGlobalResourceChanged -= HandleResourceChanged;
+    }
+
+    private void HandleResourceChanged(ResourceType resourceType, int amount)
+    {
+        if (resourceType == ResourceType.Blueprints)
+        {
+            // При изменении чертежей обновляем состояния всех узлов
+            UpdateAllNodesStates();
+        }
+    }
+
     private void InitializeDefaultStates()
     {
         // Инициализируем состояния по умолчанию для всех узлов
@@ -78,10 +98,15 @@ public class ResearchManager : MonoBehaviour
             }
         }
 
-        // Проверяем ресурсы
         int currentBlueprints = GlobalResourceManager.Instance?.GetResourceAmount(ResourceType.Blueprints) ?? 0;
-        return currentBlueprints >= node.BlueprintCost ?
-            ResearchNodeState.Available : ResearchNodeState.Available; // Можно добавить отдельный статус "NoResources"
+        if (currentBlueprints >= node.BlueprintCost)
+        {
+            return ResearchNodeState.Available;
+        }
+        else
+        {
+            return ResearchNodeState.Locked; // Или можно создать отдельный статус "NoResources"
+        }
     }
 
     public bool CanResearch(ResearchNodeSO node)

@@ -34,6 +34,26 @@ public class UI_ResearchNode : MonoBehaviour
         UpdateVisuals();
     }
 
+    private void OnEnable()
+    {
+        // Подписываемся на изменение глобальных ресурсов
+        EventHub.OnGlobalResourceChanged += HandleResourceChanged;
+    }
+
+    private void OnDisable()
+    {
+        EventHub.OnGlobalResourceChanged -= HandleResourceChanged;
+    }
+
+    private void HandleResourceChanged(ResourceType resourceType, int amount)
+    {
+        // Если изменилось количество чертежей - обновляем визуал
+        if (resourceType == ResourceType.Blueprints)
+        {
+            UpdateVisuals();
+        }
+    }
+
     private void OnDestroy()
     {
         ResearchManager.OnNodeStateChanged -= HandleAnyNodeStateChanged;
