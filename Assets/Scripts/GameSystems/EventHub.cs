@@ -34,4 +34,7 @@ public static class EventHub
     public static Action OnGameOver;
     public static Action<EnemyBehaviour> OnEnemyDied;
     public static Action OnLevelComplete;
+
+    // Новые события для исследований
+
 }

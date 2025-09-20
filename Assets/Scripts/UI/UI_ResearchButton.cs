@@ -4,10 +4,10 @@ using UnityEngine.UI;
 public class UI_ResearchButton : MonoBehaviour
 {
     [SerializeField] private Button researchButton;
-
+    
     private void Start()
     {
-        researchButton.onClick.AddListener(OnResearchButtonClick);
+        researchButton.onClick.AddListener(OnResearchButtonClick);        
     }
 
     private void OnResearchButtonClick()
@@ -18,7 +18,6 @@ public class UI_ResearchButton : MonoBehaviour
             return;
         }
 
-        Debug.Log("Research button clicked");
         UI_Manager.Instance.ToggleResearchPanel();
     }
 }

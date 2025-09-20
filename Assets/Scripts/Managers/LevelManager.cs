@@ -65,6 +65,12 @@ public class LevelManager : MonoBehaviour
         {
             Debug.Log("Level completed!");
             EventHub.OnLevelComplete?.Invoke();
+            // Уведомляем о прогрессе уровня
+
+            // TODO: Раскомментировать после создания системы прогресса
+            /*int completedLevelNumber = GetCompletedLevelNumber(); // Нужно реализовать
+            EventHub.OnPlayerLevelProgress?.Invoke(completedLevelNumber);
+            ResearchManager.Instance?.UpdatePlayerProgress(completedLevelNumber);*/
         }
 
         StartCoroutine(ReturnToStrategyMapAfterDelay(3f));
