@@ -130,6 +130,7 @@ public class ResearchManager : MonoBehaviour
         OnNodeStateChanged?.Invoke(node.name, ResearchNodeState.Researched);
 
         // ПРИМЕНЯЕМ ЭФФЕКТЫ ИССЛЕДОВАНИЯ
+        Debug.Log($"Applying research effects for: {node.NodeName}");
         ResearchEffectsManager.Instance?.ApplyResearchEffects(node);
 
         // Обновляем состояния зависимых узлов

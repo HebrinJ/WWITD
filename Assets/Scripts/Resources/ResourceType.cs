@@ -1,7 +1,7 @@
 public enum ResourceType
 {
     Money,
-    Steel,
+    Iron,
     Fuel,
     Blueprints,
 }

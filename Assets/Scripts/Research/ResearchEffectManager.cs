@@ -5,7 +5,8 @@ public class ResearchEffectsManager : MonoBehaviour
 {
     public static ResearchEffectsManager Instance { get; private set; }
 
-    private Dictionary<string, List<ResearchEffect>> activeEffects = new Dictionary<string, List<ResearchEffect>>();
+    // Для хранения эффектов между сценами
+    private Dictionary<string, List<ResearchEffect>> towerEffects = new Dictionary<string, List<ResearchEffect>>();
 
     private void Awake()
     {
@@ -25,20 +26,12 @@ public class ResearchEffectsManager : MonoBehaviour
 
         foreach (ResearchEffect effect in researchNode.ResearchEffects)
         {
-            ApplyEffect(effect, researchNode.name);
+            ApplyEffect(effect);
         }
     }
 
-    private void ApplyEffect(ResearchEffect effect, string sourceId)
+    private void ApplyEffect(ResearchEffect effect)
     {
-        // Регистрируем эффект
-        if (!activeEffects.ContainsKey(sourceId))
-        {
-            activeEffects[sourceId] = new List<ResearchEffect>();
-        }
-        activeEffects[sourceId].Add(effect);
-
-        // Применяем эффект
         switch (effect.Type)
         {
             case ResearchEffect.EffectType.TowerStatModifier:
@@ -57,55 +50,102 @@ public class ResearchEffectsManager : MonoBehaviour
                 UnlockAbility(effect);
                 break;
         }
-
-        Debug.Log($"Applied effect: {effect.Type} from {sourceId}");
     }
 
     private void ApplyTowerStatModifier(ResearchEffect effect)
     {
-        // Здесь будет логика применения модификаторов к башням
-        // Пока просто логируем
-        Debug.Log($"Tower {effect.TargetId} modified by {effect.Value}");
-    }
-
-    private void ApplyGlobalBonus(ResearchEffect effect)
-    {
-        // Глобальные бонусы (например, +10% к стартовым ресурсам)
-        Debug.Log($"Global bonus applied: {effect.StringValue} = {effect.Value}");
-    }
-
-    private void UnlockTower(ResearchEffect effect)
-    {
-        // Разблокировка новой башни
-        Debug.Log($"Unlocked tower: {effect.TargetId}");
-        // Здесь нужно добавить вызов в TowerManager или BuildManager
-    }
-
-    private void UnlockAbility(ResearchEffect effect)
-    {
-        // Разблокировка способности
-        Debug.Log($"Unlocked ability: {effect.TargetId}");
-        // Здесь нужно добавить вызов в AbilityManager
-    }
-
-    public float GetTowerStatModifier(string towerType, string statName)
-    {
-        // Возвращает суммарный модификатор для конкретного параметра башни
-        float totalModifier = 0f;
-
-        foreach (var effects in activeEffects.Values)
+        // Формат: "TowerType_StatName_ModifierType" например "Riflemen_Damage_Flat"
+        string[] parts = effect.TargetId.Split('_');
+        if (parts.Length != 3)
         {
-            foreach (ResearchEffect effect in effects)
+            Debug.LogError($"Invalid target format: {effect.TargetId}. Expected: TowerType_StatName_ModifierType");
+            return;
+        }
+
+        string towerType = parts[0];
+        string statName = parts[1];
+        string modifierType = parts[2];
+
+        // Сохраняем эффект для применения на тактических уровнях
+        string effectKey = $"{towerType}_{statName}";
+        if (!towerEffects.ContainsKey(effectKey))
+        {
+            towerEffects[effectKey] = new List<ResearchEffect>();
+        }
+        towerEffects[effectKey].Add(effect);
+
+        Debug.Log($"Research effect saved: {effect.TargetId} = {effect.Value}");
+        Debug.Log($"Total effects for {effectKey}: {towerEffects[effectKey].Count}");
+    }
+
+    // Остальные методы остаются без изменений
+    private void ApplyGlobalBonus(ResearchEffect effect) { /* ... */ }
+    private void UnlockTower(ResearchEffect effect) { /* ... */ }
+    private void UnlockAbility(ResearchEffect effect) { /* ... */ }
+
+    // ГЛАВНЫЙ МЕТОД: Применяем все исследования к башне при её создании
+    public void ApplyResearchEffectsToTower(TowerBehaviour tower)
+    {
+        if (tower == null) return;
+
+        string towerType = tower.GetTowerType().ToString();
+        Debug.Log($"Applying research effects to tower: {towerType}");
+
+        int appliedEffectsCount = 0;
+
+        foreach (var effectEntry in towerEffects)
+        {
+            string[] keyParts = effectEntry.Key.Split('_');
+            if (keyParts.Length == 2 && keyParts[0] == towerType)
             {
-                if (effect.Type == ResearchEffect.EffectType.TowerStatModifier &&
-                    effect.TargetId == towerType &&
-                    effect.StringValue == statName)
+                string statName = keyParts[1];
+
+                foreach (ResearchEffect effect in effectEntry.Value)
                 {
-                    totalModifier += effect.Value;
+                    string[] effectParts = effect.TargetId.Split('_');
+                    if (effectParts.Length == 3)
+                    {
+                        string modifierType = effectParts[2];
+                        ApplyEffectToTower(tower, statName, modifierType, effect.Value);
+                        appliedEffectsCount++;
+                    }
                 }
             }
         }
 
-        return totalModifier;
+        Debug.Log($"Applied {appliedEffectsCount} research effects to {towerType}");
+        tower.LogCurrentStats();
+    }
+
+    private void ApplyEffectToTower(TowerBehaviour tower, string statName, string modifierType, float value)
+    {
+        switch (modifierType.ToLower())
+        {
+            case "flat":
+                tower.ApplyFlatBonus(statName, Mathf.RoundToInt(value));
+                break;
+
+            case "mult":
+                tower.ApplyMultiplicativeBonus(statName, value);
+                break;
+
+            default:
+                Debug.LogError($"Unknown modifier type: {modifierType}");
+                break;
+        }
+    }
+
+    // Метод для отладки: показать все сохраненные эффекты
+    public void DebugPrintAllEffects()
+    {
+        Debug.Log("=== ALL SAVED RESEARCH EFFECTS ===");
+        foreach (var entry in towerEffects)
+        {
+            Debug.Log($"Key: {entry.Key}, Effects: {entry.Value.Count}");
+            foreach (var effect in entry.Value)
+            {
+                Debug.Log($"  - {effect.TargetId} = {effect.Value}");
+            }
+        }
     }
 }

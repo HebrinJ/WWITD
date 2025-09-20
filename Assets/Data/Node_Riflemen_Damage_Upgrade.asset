@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa7069db0fbfe224d8c3bae1334ee5a5, type: 3}
-  m_Name: Node_TestUpgrade1
+  m_Name: Node_Riflemen_Damage_Upgrade
   m_EditorClassIdentifier: 
-  NodeName: "\u0423\u0440\u043E\u043D +1"
+  NodeName: "\u0423\u0440\u043E\u043D +10"
   Description: 
   NodeType: 1
   BlueprintCost: 5
   Icon: {fileID: 0}
   ResearchEffects:
   - Type: 0
-    TargetId: Data_Tower_MachineGun
-    Value: 1
-    StringValue: Damage
+    TargetId: Riflemen_Damage_Flat
+    Value: 10
+    StringValue: 
   PrerequisiteNodes:
   - {fileID: 11400000, guid: 3c378cbd3fc0c1942873551cf399b5bc, type: 2}

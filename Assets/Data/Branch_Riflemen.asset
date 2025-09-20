@@ -16,3 +16,4 @@ MonoBehaviour:
   ResearchNodes:
   - {fileID: 11400000, guid: 3c378cbd3fc0c1942873551cf399b5bc, type: 2}
   - {fileID: 11400000, guid: f6d7e2af17df89044a89b907e5500c55, type: 2}
+  - {fileID: 11400000, guid: 11410824555aecc4995f078336687254, type: 2}
