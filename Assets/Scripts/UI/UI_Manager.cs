@@ -10,9 +10,8 @@ public class UI_Manager : MonoBehaviour
     [Header("Resource Displays")]
     [SerializeField] private UI_ResourceDisplay blueprintDisplay;
 
-    //public bool IsResearchPanelOpen { get; private set; }
-    public bool IsResearchPanelOpen;
-
+    public bool IsResearchPanelOpen { get; private set; }
+    
     private void Awake()
     {
         if (Instance != null && Instance != this)
