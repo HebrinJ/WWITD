@@ -36,5 +36,5 @@ public static class EventHub
     public static Action OnLevelComplete;
 
     // Новые события для исследований
-
+    public static Action<ResearchTabType> OnResearchTabChanged;
 }

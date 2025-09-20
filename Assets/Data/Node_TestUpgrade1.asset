@@ -17,5 +17,10 @@ MonoBehaviour:
   NodeType: 1
   BlueprintCost: 5
   Icon: {fileID: 0}
+  ResearchEffects:
+  - Type: 0
+    TargetId: Data_Tower_MachineGun
+    Value: 1
+    StringValue: Damage
   PrerequisiteNodes:
   - {fileID: 11400000, guid: 3c378cbd3fc0c1942873551cf399b5bc, type: 2}

@@ -8,6 +8,7 @@ public class ResearchNodeSO : ScriptableObject
     public ResearchNodeType NodeType;
     public int BlueprintCost;
     public Sprite Icon;
+    public ResearchEffect[] ResearchEffects; // Эффекты, которые применяются при исследовании
 
     // Пока оставим требования простыми. Позже усложним.
     public ResearchNodeSO[] PrerequisiteNodes; // Какие узлы должны быть исследованы ДО этого

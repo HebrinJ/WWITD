@@ -8,6 +8,9 @@ public class ResearchManager : MonoBehaviour
     [SerializeField] private ResearchStateSO researchState;
     [SerializeField] private ResearchBranchSO[] allBranches; // Все ветки исследований
 
+    [Header("Research Tabs")]
+    [SerializeField] private ResearchTabSO[] researchTabs;
+
     public static event System.Action<string, ResearchNodeState> OnNodeStateChanged;
 
     private void Awake()
@@ -126,6 +129,9 @@ public class ResearchManager : MonoBehaviour
         researchState.SetNodeState(node.name, ResearchNodeState.Researched);
         OnNodeStateChanged?.Invoke(node.name, ResearchNodeState.Researched);
 
+        // ПРИМЕНЯЕМ ЭФФЕКТЫ ИССЛЕДОВАНИЯ
+        ResearchEffectsManager.Instance?.ApplyResearchEffects(node);
+
         // Обновляем состояния зависимых узлов
         UpdateDependentNodes(node);
 
@@ -193,5 +199,26 @@ public class ResearchManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public ResearchTabSO[] GetResearchTabs()
+    {
+        return researchTabs;
+    }
+
+    public ResearchBranchSO[] GetBranchesForTab(ResearchTabType tabType)
+    {
+        ResearchTabSO tab = System.Array.Find(researchTabs, t => t.TabType == tabType);
+        return tab != null ? tab.BranchesInTab : new ResearchBranchSO[0];
+    }
+
+    // Проверяет, доступен ли раздел для исследования
+    public bool IsTabAvailable(ResearchTabType tabType)
+    {
+        ResearchTabSO tab = System.Array.Find(researchTabs, t => t.TabType == tabType);
+        if (tab == null) return false;
+
+        // Здесь можно добавить логику разблокировки разделов (например, по уровню игрока)
+        return !tab.IsLocked;
     }
 }
