@@ -87,7 +87,7 @@ public class BuildManager : MonoBehaviour
 
         // 2. Проверка всех требуемых ресурсов по списку стоимости
         bool canAffordAll = true;
-        foreach (TowerCost cost in towerData.constructionCost)
+        foreach (ResourceCost cost in towerData.constructionCost)
         {
             if (localResourceManager != null && !localResourceManager.CanAfford(cost.resourceType, cost.amount))
             {
@@ -101,7 +101,7 @@ public class BuildManager : MonoBehaviour
         // 3. Если ресурсов хватает - списать их и построить башню
         if (canAffordAll)
         {
-            foreach (TowerCost cost in towerData.constructionCost)
+            foreach (ResourceCost cost in towerData.constructionCost)
             {
                 ResourceCost resourceCost = new ResourceCost(cost.resourceType, cost.amount);
                 EventHub.OnLocalResourceSpendRequested?.Invoke(resourceCost);

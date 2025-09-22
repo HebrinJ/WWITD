@@ -30,7 +30,7 @@ public class TowerDataSO : ScriptableObject
     /// Проверяется системой строительства перед размещением.
     /// </summary>
     [Tooltip("Ресурсы, требуемые для постройки. Может содержать несколько типов.")]
-    public TowerCost[] constructionCost;
+    public ResourceCost[] constructionCost;
 
     /// <summary>
     /// Максимальное количество здоровья (HP) башни.
