@@ -20,7 +20,7 @@ MonoBehaviour:
   maxHealth: 50
   maxArmor: 0
   damageType: 0
-  damage: 10
+  damage: 20
   fireDistance: 10
   fireRate: 1
   towerPrefab: {fileID: 6527161790620880142, guid: 6092d3f99096ac9498ce768974ccb07b, type: 3}

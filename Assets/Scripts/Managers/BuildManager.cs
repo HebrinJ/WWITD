@@ -1,34 +1,34 @@
 using UnityEngine;
 
 /// <summary>
-/// Центральный менеджер, отвечающий за процесс строительства и управления башнями на игровом уровне.
-/// Координирует взаимодействие между выбором игрока, проверкой ресурсов, данными башен и их созданием в мире.
-/// Является основным подписчиком и обработчиком событий, связанных со строительством.
+/// Р¦РµРЅС‚СЂР°Р»СЊРЅС‹Р№ РјРµРЅРµРґР¶РµСЂ, РѕС‚РІРµС‡Р°СЋС‰РёР№ Р·Р° РїСЂРѕС†РµСЃСЃ СЃС‚СЂРѕРёС‚РµР»СЊСЃС‚РІР° Рё СѓРїСЂР°РІР»РµРЅРёСЏ Р±Р°С€РЅСЏРјРё РЅР° РёРіСЂРѕРІРѕРј СѓСЂРѕРІРЅРµ.
+/// РљРѕРѕСЂРґРёРЅРёСЂСѓРµС‚ РІР·Р°РёРјРѕРґРµР№СЃС‚РІРёРµ РјРµР¶РґСѓ РІС‹Р±РѕСЂРѕРј РёРіСЂРѕРєР°, РїСЂРѕРІРµСЂРєРѕР№ СЂРµСЃСѓСЂСЃРѕРІ, РґР°РЅРЅС‹РјРё Р±Р°С€РµРЅ Рё РёС… СЃРѕР·РґР°РЅРёРµРј РІ РјРёСЂРµ.
+/// РЇРІР»СЏРµС‚СЃСЏ РѕСЃРЅРѕРІРЅС‹Рј РїРѕРґРїРёСЃС‡РёРєРѕРј Рё РѕР±СЂР°Р±РѕС‚С‡РёРєРѕРј СЃРѕР±С‹С‚РёР№, СЃРІСЏР·Р°РЅРЅС‹С… СЃРѕ СЃС‚СЂРѕРёС‚РµР»СЊСЃС‚РІРѕРј.
 /// </summary>
 /// <remarks>
-/// <para><b>Взаимодействие:</b></para>
+/// <para><b>Р’Р·Р°РёРјРѕРґРµР№СЃС‚РІРёРµ:</b></para>
 /// <list type="bullet">
-/// <item><description>Подписывается на события UI: <see cref="EventHub.OnTowerPlaceholderSelected"/>, <see cref="EventHub.OnTowerSelectedFromUI"/>.</description></item>
-/// <item><description>Взаимодействует с <see cref="LocalResourceManager"/> для проверки и списания ресурсов.</description></item>
-/// <item><description>Запрашивает данные башен через <see cref="GameData.Instance"/>.</description></item>
-/// <item><description>Создает экземпляры башен и применяет к ним эффекты исследований через <see cref="ResearchEffectsManager"/>.</description></item>
+/// <item><description>РџРѕРґРїРёСЃС‹РІР°РµС‚СЃСЏ РЅР° СЃРѕР±С‹С‚РёСЏ UI: <see cref="EventHub.OnTowerPlaceholderSelected"/>, <see cref="EventHub.OnTowerSelectedFromUI"/>.</description></item>
+/// <item><description>Р’Р·Р°РёРјРѕРґРµР№СЃС‚РІСѓРµС‚ СЃ <see cref="LocalResourceManager"/> РґР»СЏ РїСЂРѕРІРµСЂРєРё Рё СЃРїРёСЃР°РЅРёСЏ СЂРµСЃСѓСЂСЃРѕРІ.</description></item>
+/// <item><description>Р—Р°РїСЂР°С€РёРІР°РµС‚ РґР°РЅРЅС‹Рµ Р±Р°С€РµРЅ С‡РµСЂРµР· <see cref="GameData.Instance"/>.</description></item>
+/// <item><description>РЎРѕР·РґР°РµС‚ СЌРєР·РµРјРїР»СЏСЂС‹ Р±Р°С€РµРЅ Рё РїСЂРёРјРµРЅСЏРµС‚ Рє РЅРёРј СЌС„С„РµРєС‚С‹ РёСЃСЃР»РµРґРѕРІР°РЅРёР№ С‡РµСЂРµР· <see cref="ResearchEffectsManager"/>.</description></item>
 /// </list>
 /// </remarks>
 public class BuildManager : MonoBehaviour
 {
     [SerializeField]
-    [Tooltip("Ссылка на менеджер локальных ресурсов (деньги, железо, горючее) для проверки стоимости строительства.")]
+    [Tooltip("РЎСЃС‹Р»РєР° РЅР° РјРµРЅРµРґР¶РµСЂ Р»РѕРєР°Р»СЊРЅС‹С… СЂРµСЃСѓСЂСЃРѕРІ (РґРµРЅСЊРіРё, Р¶РµР»РµР·Рѕ, РіРѕСЂСЋС‡РµРµ) РґР»СЏ РїСЂРѕРІРµСЂРєРё СЃС‚РѕРёРјРѕСЃС‚Рё СЃС‚СЂРѕРёС‚РµР»СЊСЃС‚РІР°.")]
     private LocalResourceManager localResourceManager;
 
     /// <summary>
-    /// Текущий выбранный игроком плейсхолдер для строительства. 
-    /// Хранится после события OnTowerPlaceholderSelected и очищается после постройки или отмены.
+    /// РўРµРєСѓС‰РёР№ РІС‹Р±СЂР°РЅРЅС‹Р№ РёРіСЂРѕРєРѕРј РїР»РµР№СЃС…РѕР»РґРµСЂ РґР»СЏ СЃС‚СЂРѕРёС‚РµР»СЊСЃС‚РІР°. 
+    /// РҐСЂР°РЅРёС‚СЃСЏ РїРѕСЃР»Рµ СЃРѕР±С‹С‚РёСЏ OnTowerPlaceholderSelected Рё РѕС‡РёС‰Р°РµС‚СЃСЏ РїРѕСЃР»Рµ РїРѕСЃС‚СЂРѕР№РєРё РёР»Рё РѕС‚РјРµРЅС‹.
     /// </summary>
     private TowerPlaceholder selectedPlaceholder;
 
     /// <summary>
-    /// Тип башни, выбранный для постройки в текущем плейсхолдере.
-    /// Хранится после события OnTowerSelectedFromUI и очищается после постройки или если ресурсов недостаточно.
+    /// РўРёРї Р±Р°С€РЅРё, РІС‹Р±СЂР°РЅРЅС‹Р№ РґР»СЏ РїРѕСЃС‚СЂРѕР№РєРё РІ С‚РµРєСѓС‰РµРј РїР»РµР№СЃС…РѕР»РґРµСЂРµ.
+    /// РҐСЂР°РЅРёС‚СЃСЏ РїРѕСЃР»Рµ СЃРѕР±С‹С‚РёСЏ OnTowerSelectedFromUI Рё РѕС‡РёС‰Р°РµС‚СЃСЏ РїРѕСЃР»Рµ РїРѕСЃС‚СЂРѕР№РєРё РёР»Рё РµСЃР»Рё СЂРµСЃСѓСЂСЃРѕРІ РЅРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ.
     /// </summary>
     private TowerType pendingTowerType;
 
@@ -47,19 +47,19 @@ public class BuildManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Обработчик события выбора плейсхолдера. Сохраняет выбранный плейсхолдер для последующего использования.
+    /// РћР±СЂР°Р±РѕС‚С‡РёРє СЃРѕР±С‹С‚РёСЏ РІС‹Р±РѕСЂР° РїР»РµР№СЃС…РѕР»РґРµСЂР°. РЎРѕС…СЂР°РЅСЏРµС‚ РІС‹Р±СЂР°РЅРЅС‹Р№ РїР»РµР№СЃС…РѕР»РґРµСЂ РґР»СЏ РїРѕСЃР»РµРґСѓСЋС‰РµРіРѕ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ.
     /// </summary>
-    /// <param name="placeholder">Выбранный плейсхолдер, содержащий информацию о позиции и ограничениях.</param>
+    /// <param name="placeholder">Р’С‹Р±СЂР°РЅРЅС‹Р№ РїР»РµР№СЃС…РѕР»РґРµСЂ, СЃРѕРґРµСЂР¶Р°С‰РёР№ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ РїРѕР·РёС†РёРё Рё РѕРіСЂР°РЅРёС‡РµРЅРёСЏС….</param>
     private void HandlePlaceholderSelected(TowerPlaceholder placeholder)
     {
         selectedPlaceholder = placeholder;
     }
 
     /// <summary>
-    /// Обработчик события выбора типа башни из UI. Инициирует процесс проверки и попытки постройки.
-    /// Для работы требует предварительно выбранный плейсхолдер.
+    /// РћР±СЂР°Р±РѕС‚С‡РёРє СЃРѕР±С‹С‚РёСЏ РІС‹Р±РѕСЂР° С‚РёРїР° Р±Р°С€РЅРё РёР· UI. РРЅРёС†РёРёСЂСѓРµС‚ РїСЂРѕС†РµСЃСЃ РїСЂРѕРІРµСЂРєРё Рё РїРѕРїС‹С‚РєРё РїРѕСЃС‚СЂРѕР№РєРё.
+    /// Р”Р»СЏ СЂР°Р±РѕС‚С‹ С‚СЂРµР±СѓРµС‚ РїСЂРµРґРІР°СЂРёС‚РµР»СЊРЅРѕ РІС‹Р±СЂР°РЅРЅС‹Р№ РїР»РµР№СЃС…РѕР»РґРµСЂ.
     /// </summary>
-    /// <param name="towerType">Тип башни, выбранный игроком.</param>
+    /// <param name="towerType">РўРёРї Р±Р°С€РЅРё, РІС‹Р±СЂР°РЅРЅС‹Р№ РёРіСЂРѕРєРѕРј.</param>
     private void HandleTowerSelected(TowerType towerType)
     {
         if (selectedPlaceholder != null)
@@ -70,35 +70,35 @@ public class BuildManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Основной метод попытки постройки башни. Проверяет доступность данных и ресурсов.
-    /// Если проверки проходят успешно, списывает ресурсы и вызывает метод непосредственной постройки.
+    /// РћСЃРЅРѕРІРЅРѕР№ РјРµС‚РѕРґ РїРѕРїС‹С‚РєРё РїРѕСЃС‚СЂРѕР№РєРё Р±Р°С€РЅРё. РџСЂРѕРІРµСЂСЏРµС‚ РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ РґР°РЅРЅС‹С… Рё СЂРµСЃСѓСЂСЃРѕРІ.
+    /// Р•СЃР»Рё РїСЂРѕРІРµСЂРєРё РїСЂРѕС…РѕРґСЏС‚ СѓСЃРїРµС€РЅРѕ, СЃРїРёСЃС‹РІР°РµС‚ СЂРµСЃСѓСЂСЃС‹ Рё РІС‹Р·С‹РІР°РµС‚ РјРµС‚РѕРґ РЅРµРїРѕСЃСЂРµРґСЃС‚РІРµРЅРЅРѕР№ РїРѕСЃС‚СЂРѕР№РєРё.
     /// </summary>
-    /// <param name="towerType">Тип башни для постройки.</param>
+    /// <param name="towerType">РўРёРї Р±Р°С€РЅРё РґР»СЏ РїРѕСЃС‚СЂРѕР№РєРё.</param>
     private void TryBuildTower(TowerType towerType)
     {
-        // 1. Получение данных башни из центрального реестра
+        // 1. РџРѕР»СѓС‡РµРЅРёРµ РґР°РЅРЅС‹С… Р±Р°С€РЅРё РёР· С†РµРЅС‚СЂР°Р»СЊРЅРѕРіРѕ СЂРµРµСЃС‚СЂР°
         TowerDataSO towerData = GameData.Instance.GetTowerData(towerType);
 
         if (towerData == null)
         {
-            Debug.LogError("[BuildManager] Данные башни не найдены для типа: " + towerType);
+            Debug.LogError("[BuildManager] Р”Р°РЅРЅС‹Рµ Р±Р°С€РЅРё РЅРµ РЅР°Р№РґРµРЅС‹ РґР»СЏ С‚РёРїР°: " + towerType);
             return;
         }
 
-        // 2. Проверка всех требуемых ресурсов по списку стоимости
+        // 2. РџСЂРѕРІРµСЂРєР° РІСЃРµС… С‚СЂРµР±СѓРµРјС‹С… СЂРµСЃСѓСЂСЃРѕРІ РїРѕ СЃРїРёСЃРєСѓ СЃС‚РѕРёРјРѕСЃС‚Рё
         bool canAffordAll = true;
         foreach (TowerCost cost in towerData.constructionCost)
         {
             if (localResourceManager != null && !localResourceManager.CanAfford(cost.resourceType, cost.amount))
             {
                 canAffordAll = false;
-                Debug.Log($"[BuildManager] Недостаточно {cost.resourceType}! Требуется: {cost.amount}");
-                // TODO: Вызвать EventHub.OnTowerBuildFailed с указанием причины (мало ресурса X)
+                Debug.Log($"[BuildManager] РќРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ {cost.resourceType}! РўСЂРµР±СѓРµС‚СЃСЏ: {cost.amount}");
+                // TODO: Р’С‹Р·РІР°С‚СЊ EventHub.OnTowerBuildFailed СЃ СѓРєР°Р·Р°РЅРёРµРј РїСЂРёС‡РёРЅС‹ (РјР°Р»Рѕ СЂРµСЃСѓСЂСЃР° X)
                 break;
             }
         }
 
-        // 3. Если ресурсов хватает - списать их и построить башню
+        // 3. Р•СЃР»Рё СЂРµСЃСѓСЂСЃРѕРІ С…РІР°С‚Р°РµС‚ - СЃРїРёСЃР°С‚СЊ РёС… Рё РїРѕСЃС‚СЂРѕРёС‚СЊ Р±Р°С€РЅСЋ
         if (canAffordAll)
         {
             foreach (TowerCost cost in towerData.constructionCost)
@@ -110,36 +110,36 @@ public class BuildManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("[BuildManager] Недостаточно ресурсов для постройки этой башни");
+            Debug.Log("[BuildManager] РќРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ СЂРµСЃСѓСЂСЃРѕРІ РґР»СЏ РїРѕСЃС‚СЂРѕР№РєРё СЌС‚РѕР№ Р±Р°С€РЅРё");
             pendingTowerType = TowerType.None;
-            EventHub.OnTowerBuildFailed?.Invoke(); // Уведомляем UI о неудаче
+            EventHub.OnTowerBuildFailed?.Invoke(); // РЈРІРµРґРѕРјР»СЏРµРј UI Рѕ РЅРµСѓРґР°С‡Рµ
         }
     }
 
     /// <summary>
-    /// Обработчик события подтверждения постройки. Зарезервирован.
-    /// В текущей реализации выбор башни из UI сразу инициирует постройку.
+    /// РћР±СЂР°Р±РѕС‚С‡РёРє СЃРѕР±С‹С‚РёСЏ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ РїРѕСЃС‚СЂРѕР№РєРё. Р—Р°СЂРµР·РµСЂРІРёСЂРѕРІР°РЅ.
+    /// Р’ С‚РµРєСѓС‰РµР№ СЂРµР°Р»РёР·Р°С†РёРё РІС‹Р±РѕСЂ Р±Р°С€РЅРё РёР· UI СЃСЂР°Р·Сѓ РёРЅРёС†РёРёСЂСѓРµС‚ РїРѕСЃС‚СЂРѕР№РєСѓ.
     /// </summary>
-    /// <param name="data">Данные башни.</param>
-    /// <param name="position">Позиция для постройки.</param>
+    /// <param name="data">Р”Р°РЅРЅС‹Рµ Р±Р°С€РЅРё.</param>
+    /// <param name="position">РџРѕР·РёС†РёСЏ РґР»СЏ РїРѕСЃС‚СЂРѕР№РєРё.</param>
     private void HandleBuildConfirmed(TowerDataSO data, Vector3 position)
     {
-        // Резерв для будущей системы подтверждения постройки
+        // Р РµР·РµСЂРІ РґР»СЏ Р±СѓРґСѓС‰РµР№ СЃРёСЃС‚РµРјС‹ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ РїРѕСЃС‚СЂРѕР№РєРё
         // Debug.Log("Build confirmed event received. Future implementation.");
     }
 
     /// <summary>
-    /// Финальный метод непосредственной постройки башни в мире.
-    /// Создает экземпляр префаба, настраивает его и деактивирует использованный плейсхолдер.
+    /// Р¤РёРЅР°Р»СЊРЅС‹Р№ РјРµС‚РѕРґ РЅРµРїРѕСЃСЂРµРґСЃС‚РІРµРЅРЅРѕР№ РїРѕСЃС‚СЂРѕР№РєРё Р±Р°С€РЅРё РІ РјРёСЂРµ.
+    /// РЎРѕР·РґР°РµС‚ СЌРєР·РµРјРїР»СЏСЂ РїСЂРµС„Р°Р±Р°, РЅР°СЃС‚СЂР°РёРІР°РµС‚ РµРіРѕ Рё РґРµР°РєС‚РёРІРёСЂСѓРµС‚ РёСЃРїРѕР»СЊР·РѕРІР°РЅРЅС‹Р№ РїР»РµР№СЃС…РѕР»РґРµСЂ.
     /// </summary>
-    /// <param name="towerData">Данные строящейся башни.</param>
+    /// <param name="towerData">Р”Р°РЅРЅС‹Рµ СЃС‚СЂРѕСЏС‰РµР№СЃСЏ Р±Р°С€РЅРё.</param>
     private void BuildTower(TowerDataSO towerData)
     {
         if (selectedPlaceholder != null)
         {
             InstantiateTower(towerData, selectedPlaceholder.transform.position);
 
-            // Делаем placeholder неактивным после постройки
+            // Р”РµР»Р°РµРј placeholder РЅРµР°РєС‚РёРІРЅС‹Рј РїРѕСЃР»Рµ РїРѕСЃС‚СЂРѕР№РєРё
             selectedPlaceholder.gameObject.SetActive(false);
             selectedPlaceholder = null;
             pendingTowerType = TowerType.None;
@@ -147,17 +147,17 @@ public class BuildManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Создает экземпляр башни в мире, инициализирует его данные и применяет исследованные улучшения.
+    /// РЎРѕР·РґР°РµС‚ СЌРєР·РµРјРїР»СЏСЂ Р±Р°С€РЅРё РІ РјРёСЂРµ, РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµС‚ РµРіРѕ РґР°РЅРЅС‹Рµ Рё РїСЂРёРјРµРЅСЏРµС‚ РёСЃСЃР»РµРґРѕРІР°РЅРЅС‹Рµ СѓР»СѓС‡С€РµРЅРёСЏ.
     /// </summary>
-    /// <param name="towerData">ScriptableObject с данными башни.</param>
-    /// <param name="position">Позиция в мировом пространстве для создания башни.</param>
+    /// <param name="towerData">ScriptableObject СЃ РґР°РЅРЅС‹РјРё Р±Р°С€РЅРё.</param>
+    /// <param name="position">РџРѕР·РёС†РёСЏ РІ РјРёСЂРѕРІРѕРј РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРµ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ Р±Р°С€РЅРё.</param>
     private void InstantiateTower(TowerDataSO towerData, Vector3 position)
     {
-        // 1. Создание экземпляра префаба башни
+        // 1. РЎРѕР·РґР°РЅРёРµ СЌРєР·РµРјРїР»СЏСЂР° РїСЂРµС„Р°Р±Р° Р±Р°С€РЅРё
         GameObject towerInstance = Instantiate(towerData.towerPrefab, position, Quaternion.identity);
-        Debug.Log($"[BuildManager] Построена башня: {towerData.towerName}");
+        Debug.Log($"[BuildManager] РџРѕСЃС‚СЂРѕРµРЅР° Р±Р°С€РЅСЏ: {towerData.towerName}");
 
-        // 2. Инициализация данных башни
+        // 2. РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РґР°РЅРЅС‹С… Р±Р°С€РЅРё
         TowerBehaviour towerBehaviour = towerInstance.GetComponent<TowerBehaviour>();
         if (towerBehaviour != null)
         {
@@ -165,17 +165,17 @@ public class BuildManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("[BuildManager] У префаба башни отсутствует компонент TowerBehaviour: " + towerData.towerName);
+            Debug.LogError("[BuildManager] РЈ РїСЂРµС„Р°Р±Р° Р±Р°С€РЅРё РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РєРѕРјРїРѕРЅРµРЅС‚ TowerBehaviour: " + towerData.towerName);
         }
 
-        // 3. Применение эффектов от исследований (улучшений) к новой башне
+        // 3. РџСЂРёРјРµРЅРµРЅРёРµ СЌС„С„РµРєС‚РѕРІ РѕС‚ РёСЃСЃР»РµРґРѕРІР°РЅРёР№ (СѓР»СѓС‡С€РµРЅРёР№) Рє РЅРѕРІРѕР№ Р±Р°С€РЅРµ
         if (ResearchEffectsManager.Instance != null)
         {
             ResearchEffectsManager.Instance.ApplyResearchEffectsToTower(towerBehaviour);
         }
         else
         {
-            Debug.LogWarning("[BuildManager] ResearchEffectsManager не найден! Башня построена без учёта исследований.");
+            Debug.LogWarning("[BuildManager] ResearchEffectsManager РЅРµ РЅР°Р№РґРµРЅ! Р‘Р°С€РЅСЏ РїРѕСЃС‚СЂРѕРµРЅР° Р±РµР· СѓС‡С‘С‚Р° РёСЃСЃР»РµРґРѕРІР°РЅРёР№.");
         }
     }
 }
