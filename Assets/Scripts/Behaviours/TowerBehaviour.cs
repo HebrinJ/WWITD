@@ -23,10 +23,15 @@ public class TowerBehaviour : MonoBehaviour
     [Tooltip("Данные башни (ScriptableObject), содержащие базовые характеристики.")]
     private TowerDataSO data;
 
+    [Header("Target System")]
+    [SerializeField]
+    [Tooltip("Режим приоритета выбора целей.")]
+    private TargetPriorityMode targetPriorityMode = TargetPriorityMode.Closest;
+
     /// <summary>
-    /// Текущая цель атаки башни.
+    /// Система управления целями башни. Отвечает за поиск и валидацию целей.
     /// </summary>
-    private EnemyBehaviour currentTarget;
+    private TowerTargetSystem targetSystem;
 
     /// <summary>
     /// Ссылка на корутину атаки для возможности ее остановки.
@@ -57,23 +62,16 @@ public class TowerBehaviour : MonoBehaviour
     private int baseHealth;
     private int baseArmor;
 
-    private void Start()
+    private void Awake()
     {
-        // Кэшируем базовые значения из ScriptableObject
-        Damage = data.damage;
-        baseFireRate = data.fireRate;
-        baseFireDistance = data.fireDistance;
-        baseHealth = data.maxHealth;
-        baseArmor = data.maxArmor;
-
         Initialize();
     }
 
     /// <summary>
-    /// Основной метод инициализации башни. Запускает корутину атаки.
+    /// Основной метод запуска поведения башни. Активирует корутину атаки.
     /// </summary>
-    private void Initialize()
-    {
+    private void Start()
+    {       
         if (data != null)
         {
             StartAttackRoutine();
@@ -82,6 +80,23 @@ public class TowerBehaviour : MonoBehaviour
         {
             Debug.LogError("TowerData is not assigned!", this);
         }
+    }
+
+    /// <summary>
+    /// Основной метод инициализации башни
+    /// </summary>
+    private void Initialize()
+    {
+        // Кэшируем базовые значения из ScriptableObject
+        Damage = data.damage;
+        baseFireRate = data.fireRate;
+        baseFireDistance = data.fireDistance;
+        baseHealth = data.maxHealth;
+        baseArmor = data.maxArmor;
+
+        // Инициализация системы управления целями
+        float currentRange = GetModifiedFireDistance();
+        targetSystem = new TowerTargetSystem(this, targetPriorityMode, currentRange);
     }
 
     /// <summary>
@@ -128,7 +143,7 @@ public class TowerBehaviour : MonoBehaviour
     {
         float flatBonus = flatBonuses.ContainsKey("FireDistance") ? flatBonuses["FireDistance"] : 0f;
         float multiplier = multiplicativeBonuses.ContainsKey("FireDistance") ? multiplicativeBonuses["FireDistance"] : 1f;
-
+        
         return (baseFireDistance + flatBonus) * multiplier;
     }
 
@@ -240,77 +255,69 @@ public class TowerBehaviour : MonoBehaviour
     }
 
     /// <summary>
-    /// Основная корутина атаки. Работает в бесконечном цикле, пока башня активна.
+    /// Корутина атаки с использованием системы управления целями.
+    /// Сохраняет захват одной цели до ее уничтожения или выхода из радиуса.
     /// </summary>
     private IEnumerator AttackRoutine()
     {
         while (isActive)
         {
-            // 1. Поиск цели
-            bool hasTarget = FindTarget();
+            // 1. Проверяем валидность текущей цели
+            if (!targetSystem.IsCurrentTargetValid())
+            {
+                // 2. Если цель невалидна, ищем новую
+                targetSystem.FindNewTarget();
+            }
 
-            // 2. Атака, если цель найдена
-            if (hasTarget)
+            // 3. Атакуем, если есть валидная цель
+            if (targetSystem.HasTarget)
             {
                 Attack();
             }
 
-            // 3. Ожидание следующей атаки на основе модифицированной скорости
+            // 4. Ожидание следующей атаки на основе модифицированной скорости
             yield return new WaitForSeconds(1f / GetModifiedFireRate());
         }
     }
 
     /// <summary>
-    /// Поиск цели в радиусе действия башни.
-    /// </summary>
-    /// <returns>true - если цель найдена, false - если нет.</returns>
-    private bool FindTarget()
-    {
-        // Используем модифицированную дальность атаки
-        float currentRange = GetModifiedFireDistance();
-        Collider[] enemiesInRange = Physics.OverlapSphere(transform.position, currentRange);
-
-        foreach (Collider enemyCollider in enemiesInRange)
-        {
-            EnemyBehaviour enemy = enemyCollider.GetComponent<EnemyBehaviour>();
-            if (enemy != null)
-            {
-                currentTarget = enemy;
-                return true;
-            }
-        }
-
-        currentTarget = null;
-        return false;
-    }
-
-    /// <summary>
-    /// Метод атаки текущей цели. Создает снаряд и настраивает его.
+    /// Метод атаки текущей цели из системы управления целями.
+    /// Создает снаряд и настраивает его с учетом модифицированного урона.
     /// </summary>
     private void Attack()
     {
-        if (currentTarget == null) return;
+        if (!targetSystem.HasTarget) return;
 
         GameObject projectileObject = Instantiate(data.projectilePrefab,
                                                 projectileSpawnPoint.position,
                                                 projectileSpawnPoint.rotation);
 
         Projectile projectile = projectileObject.GetComponent<Projectile>();
-
-        // Используем модифицированный урон
         int finalDamage = GetModifiedDamage();
 
-        Debug.Log($"{data.towerName} attacks for {finalDamage} damage! " +
-                 $"(Base: {Damage} + Flat: {GetFlatBonus("Damage")} * Multiplier: {GetMultiplier("Damage"):F2})");
+        Debug.Log($"{data.towerName} атакует {targetSystem.CurrentTarget.Data.enemyName} " +
+                 $"на {finalDamage} урона!");
 
         if (projectile != null)
         {
-            projectile.SetTarget(currentTarget.transform, finalDamage);
+            projectile.SetTarget(targetSystem.CurrentTarget.transform, finalDamage);
         }
         else
         {
             Debug.LogError("Projectile prefab doesn't have Projectile component!");
             Destroy(projectileObject);
+        }
+    }
+
+    /// <summary>
+    /// Обновляет радиус поиска целей при изменении характеристик башни.
+    /// Вызывается после применения модификаторов от исследований.
+    /// </summary>
+    public void UpdateTargetingRange()
+    {
+        if (targetSystem != null)
+        {
+            targetSystem.UpdateTowerRange(GetModifiedFireDistance());
         }
     }
 
