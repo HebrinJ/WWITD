@@ -17,10 +17,6 @@ public class LevelManager : MonoBehaviour
     private Headquarters headquarters;
 
     [SerializeField]
-    [Tooltip("Ссылка на менеджер волн, управляющий спавном врагов.")]
-    private WaveManager waveManager;
-
-    [SerializeField]
     [Tooltip("Ссылка на менеджер локальных ресурсов уровня.")]
     private LocalResourceManager localResourceManager;
 
@@ -41,11 +37,8 @@ public class LevelManager : MonoBehaviour
             headquarters.OnHeadquartersDestroyed += HandleGameOver;
         }
 
-        // Подписываемся на событие завершения всех волн от WaveManager
-        if (waveManager != null)
-        {
-            waveManager.OnAllWavesCompleted += HandleAllWavesCompleted;
-        }
+        // Подписываемся на событие завершения всех волн
+        EventHub.OnAllWavesCompleted += HandleAllWavesCompleted;        
     }
 
     private void OnDisable()
@@ -57,10 +50,7 @@ public class LevelManager : MonoBehaviour
             headquarters.OnHeadquartersDestroyed -= HandleGameOver;
         }
 
-        if (waveManager != null)
-        {
-            waveManager.OnAllWavesCompleted -= HandleAllWavesCompleted;
-        }
+        EventHub.OnAllWavesCompleted -= HandleAllWavesCompleted;
     }
 
     private void Start()

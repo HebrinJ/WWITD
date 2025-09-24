@@ -151,6 +151,40 @@ public static class EventHub
     /// <param name="enemy">Поведение (Behaviour) врага, достигшего базы.</param>
     public static Action<EnemyBehaviour> OnEnemyReachedBase;
 
+    /// <summary>
+    /// Событие вызывается при начале обратного отсчета до следующей волны.
+    /// </summary>
+    /// <param name="delay">Длительность таймера в секундах.</param>
+    public static Action<float> OnNextWaveTimerStarted;
+
+    /// <summary>
+    /// Событие вызывается при обновлении таймера следующей волны.
+    /// </summary>
+    /// <param name="remainingTime">Оставшееся время в секундах.</param>
+    public static Action<float> OnNextWaveTimerUpdated;
+
+    /// <summary>
+    /// Событие вызывается по окончании таймера следующей волны.
+    /// </summary>
+    public static Action OnNextWaveTimerEnded;
+
+    /// <summary>
+    /// Событие вызывается при начале конкретной волны.
+    /// </summary>
+    /// <param name="waveNumber">Номер начавшейся волны (начиная с 1).</param>
+    public static Action<int> OnWaveStartedWithNumber;
+
+    /// <summary>
+    /// Событие вызывается при завершении конкретной волны.
+    /// </summary>
+    /// <param name="waveNumber">Номер завершенной волны.</param>
+    public static Action<int> OnWaveCompletedWithNumber;
+
+    /// <summary>
+    /// Событие вызывается когда все волны уровня пройдены и все враги уничтожены.
+    /// </summary>
+    public static Action OnAllWavesCompleted;
+
 
     // === ИГРОВОЙ ПРОЦЕСС И СОСТОЯНИЯ ===
 

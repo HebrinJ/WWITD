@@ -315,7 +315,7 @@ public class TowerBehaviour : MonoBehaviour
     /// </summary>
     public void UpdateTargetingRange()
     {
-        if (targetSystem != null)
+        if (targetSystem != null && data != null)
         {
             targetSystem.UpdateTowerRange(GetModifiedFireDistance());
         }

@@ -46,18 +46,18 @@ public class WaveManager : MonoBehaviour
     public int CurrentWaveNumber => currentWaveIndex + 1;
 
     // События для UI
-    public Action<float> OnNextWaveTimerStarted;
+    /*public Action<float> OnNextWaveTimerStarted;
     public Action<float> OnNextWaveTimerUpdated;
     public Action OnNextWaveTimerEnded;
     public Action<int> OnWaveStarted;
-    public Action<int> OnWaveCompleted;
+    public Action<int> OnWaveCompleted;*/
 
     /// <summary>
     /// Событие, вызываемое когда все волны уровня пройдены и все враги уничтожены.
     /// Оповещает о выполнении условия "победы по волнам". Окончательное решение о победе
     /// на уровне принимает <see cref="LevelManager"/>.
     /// </summary>
-    public Action OnAllWavesCompleted;
+    //public Action OnAllWavesCompleted;
 
     private void OnEnable()
     {
@@ -97,7 +97,7 @@ public class WaveManager : MonoBehaviour
         currentWaveIndex = waveIndex;
 
         Debug.Log($"[WaveManager] Запускается волна {CurrentWaveNumber}");
-        OnWaveStarted?.Invoke(CurrentWaveNumber);
+        EventHub.OnWaveStartedWithNumber?.Invoke(CurrentWaveNumber);
         EventHub.OnWaveStarted?.Invoke();
 
         // Запускаем корутину для спавна волны
@@ -150,7 +150,7 @@ public class WaveManager : MonoBehaviour
         // Волна завершена
         Debug.Log($"[WaveManager] Волна {waveIndex + 1} пройдена.");
         wavesCompleted++;
-        OnWaveCompleted?.Invoke(waveIndex + 1);
+        EventHub.OnWaveCompletedWithNumber?.Invoke(waveIndex + 1);
         EventHub.OnWaveCompleted?.Invoke();
 
         // Проверяем, были ли это последняя волна и последние враги
@@ -165,17 +165,17 @@ public class WaveManager : MonoBehaviour
     /// <returns>IEnumerator для работы корутины.</returns>
     private IEnumerator StartNextWaveTimerRoutine(float delay, int nextWaveIndex)
     {
-        OnNextWaveTimerStarted?.Invoke(delay);
+        EventHub.OnNextWaveTimerStarted?.Invoke(delay);
 
         float timer = delay;
         while (timer > 0)
         {
             timer -= Time.deltaTime;
-            OnNextWaveTimerUpdated?.Invoke(timer);
+            EventHub.OnNextWaveTimerUpdated?.Invoke(timer);
             yield return null;
         }
 
-        OnNextWaveTimerEnded?.Invoke();
+        EventHub.OnNextWaveTimerEnded?.Invoke();
         StartWave(nextWaveIndex); // Запускаем следующую волну
     }
 
@@ -207,7 +207,7 @@ public class WaveManager : MonoBehaviour
         {
             Debug.Log("[WaveManager] Все волны пройдены и все враги уничтожены.");
             isWavesSequenceActive = false;
-            OnAllWavesCompleted?.Invoke(); // Оповещаем о завершении всех волн
+            EventHub.OnAllWavesCompleted?.Invoke(); // Оповещаем о завершении всех волн
         }
     }
 
