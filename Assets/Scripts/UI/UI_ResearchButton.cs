@@ -39,6 +39,6 @@ public class UI_ResearchButton : MonoBehaviour
         }
 
         // Переключаем видимость панели исследований
-        UI_Manager.Instance.ToggleResearchPanel();
+        UI_ResearchPanelManager.Instance.ToggleResearchPanel();
     }
 }

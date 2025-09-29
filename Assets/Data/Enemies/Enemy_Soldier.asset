@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff2b9d9ec7f7307429a38cd79e005f6b, type: 3}
   m_Name: Enemy_Soldier
   m_EditorClassIdentifier: 
-  enemyName: Data_Enemy_Soldier
+  enemyName: Enemy_Soldier
   enemyBehaviourType: 1
   maxHealth: 50
   maxArmor: 0
