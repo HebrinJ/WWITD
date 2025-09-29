@@ -9,11 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0350b1ed1098ba744807e30c298e3839, type: 3}
-  m_Name: AbilityTab
+  m_Script: {fileID: 11500000, guid: cdeaa64dcbf06244fbf794dabe360610, type: 3}
+  m_Name: Wave_Level01_2
   m_EditorClassIdentifier: 
-  TabType: 2
-  TabName: 
-  TabIcon: {fileID: 0}
-  BranchesInTab: []
-  IsLocked: 1
+  waveId: Wave_Level01_2
+  enemiesInWave:
+  - enemyData: {fileID: 11400000, guid: 19949e792aead0f48b2402ffcc29f28b, type: 2}
+    count: 5
+    spawnInterval: 1
+  nextWaveDelay: 6

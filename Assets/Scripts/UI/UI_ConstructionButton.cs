@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,35 +16,16 @@ public class UI_ConstructionButton : MonoBehaviour
     [Tooltip("Компонент Button для обработки нажатий.")]
     [SerializeField] private Button constructionButton;
 
-    /// <summary>
-    /// Компонент Image для отображения иконки кнопки.
-    /// Меняет спрайт в зависимости от состояния режима строительства.
-    /// </summary>
-    [Tooltip("Компонент Image для отображения иконки кнопки.")]
-    [SerializeField] private Image buttonIcon;
-
-    /// <summary>
-    /// Спрайт, отображаемый когда режим строительства активен.
-    /// Обычно указывает на то, что повторное нажатие выключит режим.
-    /// </summary>
-    [Tooltip("Иконка, когда режим строительства ВКЛЮЧЕН.")]
-    [SerializeField] private Sprite constructionOnIcon;
-
-    /// <summary>
-    /// Спрайт, отображаемый когда режим строительства не активен.
-    /// Обычно указывает на то, что нажатие включит режим строительства.
-    /// </summary>
-    [Tooltip("Иконка, когда режим строительства ВЫКЛЮЧЕН.")]
-    [SerializeField] private Sprite constructionOffIcon;
+    [Tooltip("Компонент Button для обработки нажатий.")]
+    [SerializeField] private TextMeshProUGUI constructionModeDisplay;
 
     /// <summary>
     /// Инициализирует кнопку и подписывается на события при создании компонента.
-    /// Назначает обработчик нажатия кнопки и подписывается на изменение состояния режима строительства.
     /// </summary>
     private void Start()
     {
         constructionButton.onClick.AddListener(ToggleConstructionMode);
-        EventHub.OnConstructionModeChanged += UpdateButtonIcon;
+        constructionModeDisplay.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -56,18 +38,18 @@ public class UI_ConstructionButton : MonoBehaviour
         EventHub.OnConstructionModeToggled?.Invoke();
     }
 
-    /// <summary>
-    /// Обновляет визуальное состояние кнопки на основе текущего режима строительства.
-    /// Вызывается при получении события OnConstructionModeChanged из EventHub.
-    /// </summary>
-    /// <param name="isConstructionModeActive">True если режим строительства активен, иначе false.</param>
-    private void UpdateButtonIcon(bool isConstructionModeActive)
+    private void OnEnable()
     {
-        buttonIcon.sprite = isConstructionModeActive ? constructionOnIcon : constructionOffIcon;
+        EventHub.OnConstructionModeChanged += ShowModeState;
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
-        EventHub.OnConstructionModeChanged -= UpdateButtonIcon;
+        EventHub.OnConstructionModeChanged -= ShowModeState;
+    }
+
+    private void ShowModeState(bool state)
+    {
+        constructionModeDisplay.gameObject.SetActive(state);
     }
 }

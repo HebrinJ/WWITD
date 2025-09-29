@@ -9,12 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdeaa64dcbf06244fbf794dabe360610, type: 3}
-  m_Name: WaveDataSO_1_1
+  m_Script: {fileID: 11500000, guid: 0350b1ed1098ba744807e30c298e3839, type: 3}
+  m_Name: Tab_Tower
   m_EditorClassIdentifier: 
-  waveId: 1-1
-  enemiesInWave:
-  - enemyData: {fileID: 11400000, guid: 19949e792aead0f48b2402ffcc29f28b, type: 2}
-    count: 5
-    spawnInterval: 1
-  nextWaveDelay: 10
+  TabType: 0
+  TabName: Towers
+  TabIcon: {fileID: 0}
+  BranchesInTab:
+  - {fileID: 11400000, guid: 5c04ee94a78ae6246b238745e1f12995, type: 2}
+  IsLocked: 0
