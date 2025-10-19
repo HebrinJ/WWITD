@@ -136,6 +136,9 @@ public class GlobalResourceManager : MonoBehaviour
             resources[type] += amount;
             EventHub.OnGlobalResourceChanged?.Invoke(type, resources[type]);
             EventHub.OnGlobalResourceAdded?.Invoke(type, amount);
+
+            // Запрашиваем сохранение ресурсов
+            EventHub.OnGlobalResourcesSaveRequested?.Invoke();
         }
         else
         {
@@ -143,6 +146,9 @@ public class GlobalResourceManager : MonoBehaviour
             resources[type] = amount;
             EventHub.OnGlobalResourceChanged?.Invoke(type, resources[type]);
             EventHub.OnGlobalResourceAdded?.Invoke(type, amount);
+
+            // Запрашиваем сохранение ресурсов
+            EventHub.OnGlobalResourcesSaveRequested?.Invoke();
         }
     }
 

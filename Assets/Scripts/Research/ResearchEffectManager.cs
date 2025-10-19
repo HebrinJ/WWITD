@@ -59,19 +59,19 @@ public class ResearchEffectsManager : MonoBehaviour
     {
         switch (effect.Type)
         {
-            case ResearchEffect.EffectType.TowerStatModifier:
+            case EffectType.TowerStatModifier:
                 ApplyTowerStatModifier(effect);
                 break;
 
-            case ResearchEffect.EffectType.GlobalBonus:
+            case EffectType.GlobalBonus:
                 ApplyGlobalBonus(effect);
                 break;
 
-            case ResearchEffect.EffectType.UnlockTowerGrade:
+            case EffectType.UnlockTowerGrade:
                 UnlockTower(effect);
                 break;
 
-            case ResearchEffect.EffectType.UnlockAbility:
+            case EffectType.UnlockAbility:
                 UnlockAbility(effect);
                 break;
         }

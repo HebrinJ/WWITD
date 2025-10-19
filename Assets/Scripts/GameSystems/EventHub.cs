@@ -222,4 +222,32 @@ public static class EventHub
     /// </summary>
     /// <param name="tabType">Тип вкладки, на которую произошло переключение.</param>
     public static Action<ResearchTabType> OnResearchTabChanged;
+
+
+    // === СИСТЕМА СОХРАНЕНИЯ И ПРОГРЕССА ===
+
+    /// <summary>
+    /// Событие вызывается при успешном завершении уровня.
+    /// Используется для сохранения прогресса прохождения уровня.
+    /// </summary>
+    /// <param name="levelId">Идентификатор завершенного уровня (например, "Level01").</param>
+    /// <example>
+    /// Typical usage: SaveManager подписывается на это событие для сохранения прогресса.
+    /// <code>EventHub.OnLevelCompleted += SaveLevelProgress;</code>
+    /// </example>
+    public static Action<string> OnLevelCompleted;
+
+    /// <summary>
+    /// Событие вызывается при загрузке данных сохранения.
+    /// Оповещает системы о том, что данные сохранения готовы к использованию.
+    /// </summary>
+    /// <param name="playerData">Загруженные данные сохранения игрока.</param>
+    public static Action<PlayerSaveData> OnSaveDataLoaded;
+
+    /// <summary>
+    /// Событие-запрос на сохранение глобальных ресурсов.
+    /// Вызывается при изменении количества глобальных ресурсов.
+    /// Подписчик: SaveManager, который сохраняет текущее состояние ресурсов.
+    /// </summary>
+    public static Action OnGlobalResourcesSaveRequested;
 }

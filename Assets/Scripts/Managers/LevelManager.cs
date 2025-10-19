@@ -122,17 +122,16 @@ public class LevelManager : MonoBehaviour
         if (victory)
         {
             Debug.Log("[LevelManager] Уровень пройден успешно!");
+
+            // Оповещаем через EventHub о завершении уровня
+            string levelId = gameObject.scene.name; // или используйте специальный идентификатор
+            EventHub.OnLevelCompleted?.Invoke(levelId);
+
             // Оповещаем все системы о победе
             EventHub.OnLevelComplete?.Invoke();
-
-            // TODO: Раскомментировать после создания системы прогресса
-            // Уведомляем о прогрессе уровня (например, для наград и разблокировки следующих уровней)
-            /*int completedLevelNumber = GetCompletedLevelNumber(); // Нужно реализовать
-            EventHub.OnPlayerLevelProgress?.Invoke(completedLevelNumber);
-            ResearchManager.Instance?.UpdatePlayerProgress(completedLevelNumber);*/
         }
 
-        // Возвращаемся на карту через задержку (как при победе, так и при поражении)
+        // Возвращаемся на карту через задержку
         StartCoroutine(ReturnToStrategyMapAfterDelay(3f));
     }
 }
