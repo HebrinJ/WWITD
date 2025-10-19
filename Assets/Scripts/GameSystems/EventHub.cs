@@ -250,4 +250,26 @@ public static class EventHub
     /// Подписчик: SaveManager, который сохраняет текущее состояние ресурсов.
     /// </summary>
     public static Action OnGlobalResourcesSaveRequested;
+
+
+    // === СИСТЕМА СТРАТЕГИЧЕСКОЙ КАРТЫ ===
+
+    /// <summary>
+    /// Событие вызывается при изменении состояния уровня на стратегической карте.
+    /// Используется для обновления визуального представления кнопок уровней.
+    /// </summary>
+    /// <param name="levelData">Данные уровня, состояние которого изменилось.</param>
+    /// <param name="newState">Новое состояние уровня.</param>
+    /// <example>
+    /// Typical usage: UI_StrategyMap подписывается на это событие для обновления кнопок уровней.
+    /// <code>EventHub.OnLevelStateChanged += UpdateLevelButtonAppearance;</code>
+    /// </example>
+    public static Action<LevelDataSO, LevelState> OnLevelStateChanged;
+
+    /// <summary>
+    /// Событие вызывается при выборе уровня на стратегической карте.
+    /// Используется для обновления UI и активации кнопки "Сражение".
+    /// </summary>
+    /// <param name="levelData">Выбранный уровень.</param>
+    public static Action<LevelDataSO> OnLevelSelected;
 }

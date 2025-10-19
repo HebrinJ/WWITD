@@ -394,6 +394,7 @@ GameObject:
   - component: {fileID: 46446076}
   - component: {fileID: 46446075}
   - component: {fileID: 46446077}
+  - component: {fileID: 46446078}
   m_Layer: 5
   m_Name: StrategyMap
   m_TagString: Untagged
@@ -475,6 +476,21 @@ MonoBehaviour:
   researchPanel: {fileID: 87721552}
   researchTreeController: {fileID: 87721557}
   blueprintDisplay: {fileID: 198674912}
+--- !u!114 &46446078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 46446073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76d7dad2e4bddec4e941da40a113d324, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StrategyMapManager
+  campaignLevels:
+  - {fileID: 11400000, guid: b9b9e85a12bc9cb4198252e04595ab29, type: 2}
+  - {fileID: 11400000, guid: 6433f3958488ac54d8d7ded7d54ff956, type: 2}
 --- !u!1 &77171634
 GameObject:
   m_ObjectHideFlags: 0
@@ -854,6 +870,7 @@ GameObject:
   - component: {fileID: 175641263}
   - component: {fileID: 175641262}
   - component: {fileID: 175641264}
+  - component: {fileID: 175641265}
   m_Layer: 5
   m_Name: Level01
   m_TagString: Untagged
@@ -963,6 +980,28 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &175641265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 175641260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b904b77d1a634d24a85e425520ae746d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UI_LevelButton
+  levelId: Level01
+  button: {fileID: 175641264}
+  iconImage: {fileID: 0}
+  nameText: {fileID: 0}
+  lockedOverlay: {fileID: 0}
+  completedOverlay: {fileID: 0}
+  selectedIndicator: {fileID: 0}
+  availableColor: {r: 1, g: 1, b: 1, a: 1}
+  lockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  completedColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!1 &181148829
 GameObject:
   m_ObjectHideFlags: 0
@@ -1941,6 +1980,7 @@ GameObject:
   - component: {fileID: 586425230}
   - component: {fileID: 586425229}
   - component: {fileID: 586425228}
+  - component: {fileID: 586425231}
   m_Layer: 5
   m_Name: Level02
   m_TagString: Untagged
@@ -2050,6 +2090,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 586425226}
   m_CullTransparentMesh: 1
+--- !u!114 &586425231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 586425226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b904b77d1a634d24a85e425520ae746d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UI_LevelButton
+  levelId: Level02
+  button: {fileID: 586425228}
+  iconImage: {fileID: 0}
+  nameText: {fileID: 0}
+  lockedOverlay: {fileID: 0}
+  completedOverlay: {fileID: 0}
+  selectedIndicator: {fileID: 0}
+  availableColor: {r: 1, g: 1, b: 1, a: 1}
+  lockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  completedColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!1 &655319126
 GameObject:
   m_ObjectHideFlags: 0
@@ -2347,7 +2409,7 @@ Transform:
   m_GameObject: {fileID: 725747507}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.6534863, y: 2.8857393, z: 4.8451333}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2365,9 +2427,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5f7db026b8c00941a26fbb31ab2106b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level01Button: {fileID: 175641264}
+  levelButtons:
+  - {fileID: 175641265}
+  - {fileID: 586425231}
   battleButton: {fileID: 1301953661}
-  researchButton: {fileID: 407352208}
+  battleButtonText: {fileID: 363690550}
 --- !u!1 &773296528
 GameObject:
   m_ObjectHideFlags: 0
